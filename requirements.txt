@@ -1,0 +1,8 @@
+
+# Minimal runtime; all optional except PyYAML and (optionally) FastAPI
+PyYAML>=6.0.1
+fastapi>=0.111.0
+uvicorn>=0.30.0
+rich>=13.7.1
+# Optional (only if you wire a live model)
+openai>=1.40.0

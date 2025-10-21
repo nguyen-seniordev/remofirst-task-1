@@ -1,177 +1,110 @@
-# StageGuard: A Framework for Compliant Conversational AI Agents
 
-## 🚀 Overview
-**StageGuard** is a lightweight framework for building **compliant, predictable AI chat agents** — balancing flexibility (LLM adaptability) with control (scenario-based orchestration).  
-It draws inspiration from *Parlant Journeys*, but focuses on enterprise compliance and reliability, using structured stages, contextual prompts, and adaptive guardrails.
+# LexGuard — A Compliance-First Agent Framework
 
-This prototype was developed as part of an **AI Engineer assignment for RemoFirst** to demonstrate design thinking, R&D approach, and coding proficiency.
+**Goal:** Merge **predictability** (rule-based reliability) with **flexibility** (LLM adaptability) in long, multi-stage conversations — with **compliance guarantees**.
 
----
+LexGuard is a small, production-minded prototype that demonstrates:
+- A **policy DSL (YAML)** to declaratively encode *what an agent may/shall/must not do*
+- An **interaction graph** (states + transitions) to constrain control flow
+- **Guidelines** (principles) that are contextually activated to let an LLM stay natural *within* the policy envelope
+- **Guards** (PII, profanity, topic, channel) that **block/redact/self-heal** violations before responses are released
+- **Auditable transcripts** (JSONL) with *who, why, and which rule* influenced each turn
+- A **test harness** for scenario-based regression on compliance + behavior
+- A minimal **CLI** demo and optional **FastAPI** endpoint
 
-## 🎯 Core Idea
-> “Combine the adaptability of LLMs with the predictability of structured workflows.”
+> ✳️ **Inspiration**: Parlant's ideas around *Journeys* and *Guidelines* for agent behavior modeling and tool use informed this design. This repo shows how to attain a similar blend of **control + adaptability** with lightweight components and a transparent policy layer.
 
-StageGuard introduces the concept of **conversation stages**, each with specific rules and goals.  
-The agent transitions through stages while validating outputs for safety, accuracy, and compliance.
+## Why this approach?
+Traditional flows are brittle; pure LLM autonomy is risky. LexGuard composes:
+- **Determinism** via a typed **state graph** + **policy DSL**
+- **Adaptability** by letting the LLM *select among allowed* next steps and draft text, *but never outside policy*
+- **Compliance** through pre- and post-LLM **guards**, automatic **redaction**, and **human-in-the-loop** gates
 
----
+## Quickstart
 
-## 🧩 Framework Architecture
+```bash
+python -m venv .venv && source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+pip install -r requirements.txt
 
-```
-User
-  ↓
-Controller (FastAPI)
-  ↓
-StageManager → Stage Prompts
-  ↓
-LLM Engine (OpenAI / Ollama / Local)
-  ↓
-Guardrail Filter (safety + compliance checks)
-  ↓
-Response Logger
-```
+# Run the CLI demo (HR onboarding example)
+python examples/hr_onboarding/run_cli.py
 
-Each **Stage** = mini-context with its own system prompt, input expectations, and compliance filters.
-
----
-
-## ⚙️ Key Components
-
-| Component | Description |
-|------------|--------------|
-| **StageManager** | Controls flow of conversation; tracks current stage, transitions, and next steps. |
-| **Prompt Templates** | Define structure for each stage (Intro, Info Collection, Policy, Summary). |
-| **Guardrails** | Filters out unsafe or non-compliant outputs (keywords, patterns, or policies). |
-| **LLM Adapter** | Interface to any language model (OpenAI GPT, LLaMA 3, Mistral, etc.). |
-| **Logger** | Stores model outputs for transparency and debugging. |
-
----
-
-## 💬 Example Conversation Flow
-
-| Stage | Role | Behavior |
-|--------|------|----------|
-| Intro | HR Assistant | Greets user, explains purpose, asks to proceed. |
-| Info Collection | Data Collector | Gathers country + position, avoids personal data. |
-| Policy | Compliance Advisor | Explains local rules, without offering legal advice. |
-| Summary | Recorder | Confirms understanding, summarizes conversation. |
-
----
-
-## 🧠 Sample Code Snippet
-
-```python
-# stage_manager.py
-class StageManager:
-    def __init__(self):
-        self.current_stage = "intro"
-
-    def next_stage(self):
-        transitions = {
-            "intro": "collect_info",
-            "collect_info": "policy",
-            "policy": "summary"
-        }
-        self.current_stage = transitions.get(self.current_stage, "summary")
+# Optional: run a REST API
+uvicorn examples.service.api:app --reload
 ```
 
-```python
-# guardrails.py
-def guardrail_filter(text):
-    banned = ["guarantee", "personal ID", "social security", "bank account"]
-    if any(b in text.lower() for b in banned):
-        return {"safe": False, "text": "[Filtered for compliance.]"}
-    return {"safe": True, "text": text}
-```
+> By default, a **MockLLM** is used so you can run without credentials. To try a real model, set `OPENAI_API_KEY` and run with `--model openai:gpt-4o-mini` (or edit `examples/hr_onboarding/run_cli.py`).
 
-```python
-# main.py
-from fastapi import FastAPI
-from stage_manager import StageManager
-from guardrails import guardrail_filter
-from openai import OpenAI
-
-app = FastAPI()
-manager = StageManager()
-
-@app.post("/chat")
-def chat(user_input: str):
-    stage = manager.current_stage
-    prompt = stage_prompts[stage]
-    raw_output = llm(prompt + "\nUser: " + user_input)
-    response = guardrail_filter(raw_output)
-    manager.next_stage()
-    return {"stage": stage, "response": response["text"]}
-```
-
----
-
-## 🔒 Compliance Features
-
-✅ Rule-based filtering for restricted content  
-✅ Stage isolation for predictable behavior  
-✅ Regeneration logic for unsafe outputs  
-✅ Logging of all inputs/outputs for auditability  
-
----
-
-## 🧰 Tools Used
-- **Python 3.11**
-- **FastAPI**
-- **LangChain** (prompt management)
-- **OpenAI / Ollama API**
-- **Guardrails.ai** (optional for advanced validation)
-- **Redis or JSON Memory** (for conversation context)
-- **Gradio / Streamlit** (optional UI)
-
----
-
-## 🎥 Demo
-A short **Loom video (3–5 min)** walkthrough explaining:
-- Motivation & design decisions  
-- Example conversation flow  
-- How StageGuard balances compliance and adaptability  
-*(link placeholder — add your video URL here)*
-
----
-
-## 🕓 Time Spent
-Approx. **8–10 hours**, including:
-- Design & architecture: 3h  
-- Coding prototype: 4h  
-- Testing & video: 2h  
-
----
-
-## 🧭 Future Enhancements
-- Replace keyword filters with **embedding-based safety classifier**  
-- Integrate **Whisper + TTS** for full speech interface  
-- Add **confidence-based response regeneration**  
-- Support **parallel sub-agents** for multi-turn workflows  
-- Extend to **multi-lingual compliance checks**
-
----
-
-## 📦 Repository Structure
+## Repo map
 
 ```
-.
-├── main.py
-├── stage_manager.py
-├── guardrails.py
-├── prompts.yaml
-├── requirements.txt
-├── README.md
-└── demo/
-    ├── example_conversation.json
-    └── architecture.png
+lexguard/
+  README.md
+  LICENSE
+  requirements.txt
+  pyproject.toml
+  .env.example
+
+  src/lexguard/
+    __init__.py
+    dsl.py            # YAML policy schema + loader
+    graph.py          # State graph + validation
+    policy.py         # Policy model (rules, intents, approvals)
+    guards.py         # PII / profanity / topic / channel guards
+    audit.py          # JSONL audit + trace
+    memory.py         # Short/long-term memory
+    llm.py            # LLM adapters (Mock + OpenAI stub)
+    agent.py          # Orchestrator: one-turn loop with self-healing
+    tools.py          # Tool interface + a stubbed HR DB tool
+    runtime.py        # High-level runner helpers
+
+  examples/
+    hr_onboarding/
+      policy.yaml
+      prompts/
+        system.md
+        escalation.md
+      run_cli.py
+      sample_transcript.jsonl
+      tests/
+        test_pii_guard.py
+        test_flow.py
+
+    service/
+      api.py          # Minimal FastAPI app exposing /chat
+      docker-compose.yml (optional)
+
+  docs/
+    Design.md
+    Slides.md
+    VideoScript.md
+    SubmissionEmail.md
+    TimeSpent.md
 ```
+
+## Highlights
+- **Policy-first**: Declare norms in YAML; code enforces them.
+- **Flexible text**: The LLM writes language; rules **shape** it and **veto** when needed.
+- **Deterministic control**: Only **allowed transitions** are ever taken.
+- **Explainability**: Each output cites which **rules**, **guards**, and **tools** applied.
+- **Testability**: Run scenario tests that assert both **answers** and **compliance**.
+
+## How it relates to Parlant
+- Similarities: **Guidelines/Principles**, **Journeys (state)**, **tight tool integration**, and **alignment modeling**
+- Differences: a very **lightweight, open** DSL; small **standard-library-first** runtime; and transparent guards/audits you can tailor. See `docs/Design.md` for a side-by-side and rationale.
+
+## Demo Scenario (HR / EOR Onboarding)
+A multi-stage flow with sensitive data:
+1) **Greeting & Eligibility Check** → country, employment type, role  
+2) **Collect PII in Secure Channel** → only after consent & channel is `secure_upload`  
+3) **Contract Draft** → generate summary (never raw PII)  
+4) **Approval Gate** → manager/legal confirmation required  
+5) **Finalize & Next Steps** → hand-off links + checklist
+
+Guards enforce **no PII in open chat**, **no legal promises**, and **de-escalation** to a human if uncertainty grows.
 
 ---
 
-## 🧑‍💻 Author
-**Anh Nguyen Le**  
-AI Engineer | Generative AI / LLM Specialist  
-📍 Kraków, Poland  
-🔗 [LinkedIn](https://www.linkedin.com/in/anh-nguyen-le-468271382/)
+**Status:** Prototype for interview submission — field-ready patterns, not a full product.  
+**Authored:** 2025-10-20
+

@@ -1,0 +1,18 @@
+
+[project]
+name = "lexguard"
+version = "0.1.0"
+description = "Compliance-first conversational agent framework (prototype)"
+authors = [{name="Your Name", email="your@email"}]
+requires-python = ">=3.9"
+dependencies = [
+    "PyYAML>=6.0.1",
+    "fastapi>=0.111.0",
+    "uvicorn>=0.30.0",
+    "rich>=13.7.1",
+    # optional
+    "openai>=1.40.0",
+]
+
+[tool.pytest.ini_options]
+addopts = "-q"

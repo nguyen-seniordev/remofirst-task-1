@@ -1,0 +1,59 @@
+
+id: hr_onboarding
+version: "1.0"
+default_intent: start
+end_intents: ["goodbye"]
+
+intents:
+  - id: start
+    description: Entry point. Greet and check purpose.
+    allowed_next: ["eligibility", "out_of_scope"]
+  - id: eligibility
+    description: Collect country and employment type.
+    required_slots: ["country", "employment_type"]
+    allowed_next: ["collect_pii", "out_of_scope"]
+  - id: collect_pii
+    description: Route PII collection to secure channel; never display raw PII in chat.
+    required_slots: ["email", "phone"]
+    allowed_next: ["contract_summary", "await_approval"]
+  - id: contract_summary
+    description: Draft a summary of the contract (no raw PII).
+    allowed_next: ["await_approval"]
+  - id: await_approval
+    description: Wait for manager/legal approval before finalizing.
+    human_approval: "manager"
+    allowed_next: ["finalize"]
+  - id: finalize
+    description: Provide next steps and checklist.
+    allowed_next: ["goodbye"]
+  - id: out_of_scope
+    description: De-escalate to human if the topic is not supported.
+    allowed_next: ["goodbye"]
+  - id: goodbye
+    description: End of conversation.
+    allowed_next: []
+
+guidelines:
+  - id: tone
+    when: "always"
+    do: "Be concise, professional, and warm. Confirm understanding before collecting data."
+    weight: 1
+  - id: pii_handling
+    when: "intent == 'collect_pii'"
+    do: "Ask the user to upload PII via [channel:secure_upload]; summarize in chat without exposing values."
+    weight: 5
+
+guards:
+  - id: redact_pii
+    kind: pii
+    mode: redact
+  - id: no_hard_promises
+    kind: blocklist
+    mode: warn
+    params:
+      terms: ["guarantee", "legally binding", "100%"]
+  - id: secure_channel_required
+    kind: channel
+    mode: block
+    params:
+      required: secure_upload
