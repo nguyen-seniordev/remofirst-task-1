@@ -43,7 +43,7 @@ lexguard/
   LICENSE
   requirements.txt
   pyproject.toml
-  .env.example
+  .env
 
   src/lexguard/
     __init__.py
@@ -76,10 +76,7 @@ lexguard/
 
   docs/
     Design.md
-    Slides.md
-    VideoScript.md
-    SubmissionEmail.md
-    TimeSpent.md
+
 ```
 
 ## Highlights
