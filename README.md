@@ -1,8 +1,4 @@
 
-# LexGuard — A Compliance-First Agent Framework
-
-**Goal:** Merge **predictability** (rule-based reliability) with **flexibility** (LLM adaptability) in long, multi-stage conversations — with **compliance guarantees**.
-
 <p align="center">
   <img src="https://img.shields.io/badge/LexGuard-Compliance_as_Code-blue?style=for-the-badge" alt="LexGuard Badge"/>
 </p>
@@ -20,6 +16,8 @@
 ---
 
 ### 🧠 *A policy-first framework for building compliant, auditable, and adaptive AI chat agents.*
+
+**Goal:** Merge **predictability** (rule-based reliability) with **flexibility** (LLM adaptability) in long, multi-stage conversations — with **compliance guarantees**.
 
 LexGuard is a small, production-minded prototype that demonstrates:
 - A **policy DSL (YAML)** to declaratively encode *what an agent may/shall/must not do*
