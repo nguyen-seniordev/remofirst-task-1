@@ -1,5 +1,20 @@
 
-# LexGuard — A Compliance-First Agent Framework
+<p align="center">
+  <img src="https://img.shields.io/badge/LexGuard-Compliance_as_Code-blue?style=for-the-badge" alt="LexGuard Badge"/>
+</p>
+
+# LexGuard -- *"Language Governed by Law"*
+
+### 🧠 *A policy-first framework for building compliant, auditable, and adaptive AI chat agents.*
+
+> **LexGuard** derives its name from two core principles:
+>
+> - **Lex** - from the Latin *lex*, meaning “law,” “policy,” or “rule,” symbolizing **compliance, regulation, and deterministic behavior**.  
+> - **Guard** - representing **protection, enforcement, and auditability**, ensuring that AI systems operate **within approved and transparent boundaries**.
+>
+> Together, **LexGuard** embodies the idea of *“a system that guards language by law.”*  
+> It’s designed for teams that seek to merge **policy-driven predictability** with **LLM adaptability** — achieving both **control and creativity** in compliant conversational AI.
+---
 
 **Goal:** Merge **predictability** (rule-based reliability) with **flexibility** (LLM adaptability) in long, multi-stage conversations — with **compliance guarantees**.
 
@@ -43,7 +58,7 @@ lexguard/
   LICENSE
   requirements.txt
   pyproject.toml
-  .env.example
+  .env
 
   src/lexguard/
     __init__.py
@@ -76,10 +91,7 @@ lexguard/
 
   docs/
     Design.md
-    Slides.md
-    VideoScript.md
-    SubmissionEmail.md
-    TimeSpent.md
+
 ```
 
 ## Highlights
