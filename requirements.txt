@@ -6,3 +6,4 @@ uvicorn>=0.30.0
 rich>=13.7.1
 # Optional (only if you wire a live model)
 openai>=1.40.0
+python-dotenv-1.1.1

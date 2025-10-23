@@ -1,5 +1,8 @@
 
 import os, sys, json, pathlib
+from dotenv import load_dotenv
+
+load_dotenv()
 sys.path.append(str(pathlib.Path(__file__).resolve().parents[2] / "src"))
 
 from lexguard.runtime import build_runner
@@ -29,3 +32,4 @@ while True:
         break
 
 print(f"\nTranscript saved to: {transcript_path}")
+print(f"[debug] Using LLM: {model}")
